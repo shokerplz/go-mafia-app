@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"mafia-app/api"
+	"math/rand"
 	"net/http"
+	"time"
 )
 
 type responseJSON struct {
@@ -22,8 +24,10 @@ func mainHander(w http.ResponseWriter, request *http.Request) {
 }
 
 func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
 	http.HandleFunc("/mafia", mainHander)
 	http.HandleFunc("/get-user-id", api.GetUserID)
+	http.HandleFunc("/create", api.CreateRoom)
 	if err := http.ListenAndServe(":80", nil); err != nil {
 		log.Fatal(err)
 	}
