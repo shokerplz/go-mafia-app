@@ -21,3 +21,9 @@ func GetItemFromIntArray(find int, a *[]int) (bool, *int) {
 	}
 	return false, nil
 }
+
+// RemoveItemFromArray Removes item from array with reslicing
+func RemoveItemFromArray(s []interface{}, i int) []interface{} {
+	s[len(s)-1], s[i] = s[i], s[len(s)-1]
+	return s[:len(s)-1]
+}

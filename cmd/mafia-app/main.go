@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/rs/cors"
 )
 
 type responseJSON struct {
@@ -25,10 +27,15 @@ func mainHander(w http.ResponseWriter, request *http.Request) {
 
 func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
-	http.HandleFunc("/mafia", mainHander)
-	http.HandleFunc("/get-user-id", api.GetUserID)
-	http.HandleFunc("/create", api.CreateRoom)
-	if err := http.ListenAndServe(":80", nil); err != nil {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/mafia", mainHander)
+	mux.HandleFunc("/get-user-id", api.GetUserID)
+	mux.HandleFunc("/create", api.CreateRoom)
+	mux.HandleFunc("/join", api.JoinRoom)
+	mux.HandleFunc("/ready", api.SetReady)
+	mux.HandleFunc("/status", api.GetStatus)
+	handler := cors.Default().Handler(mux)
+	if err := http.ListenAndServe(":5000", handler); err != nil {
 		log.Fatal(err)
 	}
 }
