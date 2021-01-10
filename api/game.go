@@ -17,8 +17,6 @@ type actionGame struct {
 var actions = actionGame{vote: 0, kill: 1}
 
 func game(room *roomJSON) {
-	var blackPlayers []playerInRoomJSON
-	var redPlayers []playerInRoomJSON
 	for !getPlayersReady(room) {
 		time.Sleep(250 * time.Millisecond)
 	}
@@ -33,10 +31,8 @@ func game(room *roomJSON) {
 		switch player.Role {
 		case "peaceful":
 			room.Peaceful = append(room.Peaceful, player.ID)
-			redPlayers = append(redPlayers, player)
 		case "mafia":
 			room.Mafia = append(room.Mafia, player.ID)
-			blackPlayers = append(blackPlayers, player)
 		}
 		room.Users[i].Alive = true
 		room.Users[i].Ready = false
@@ -46,7 +42,7 @@ func game(room *roomJSON) {
 	room.Daytime = "night"
 	room.Cicle = 1
 	for _, idx := range bIndexes {
-		if room.Users[idx].Ready == false {
+		for room.Users[idx].Ready == false {
 			time.Sleep(250 * time.Millisecond)
 		}
 	}
@@ -114,12 +110,14 @@ func action(room *roomJSON, action int) {
 		}
 		room.Users[i].VotesAgainst = 0
 	}
+	room.Users[votesMaxUserIndex].VotesAgainst = 0
 	if action == actions.vote {
 		room.Jailed = append(room.Jailed, room.Users[votesMaxUserIndex].ID)
 	} else if action == actions.kill {
 		room.Killed = append(room.Killed, room.Users[votesMaxUserIndex].ID)
 	}
-	room.Alive = tools.RemoveItemFromArray(room.Alive, votesMaxUserIndex)
+	votesMaxUserIndexInAlive := tools.GetItemIndex(room.Users[votesMaxUserIndex].ID, &room.Alive)
+	room.Alive = tools.RemoveItemFromArray(room.Alive, votesMaxUserIndexInAlive)
 	switch room.Users[votesMaxUserIndex].Role {
 	case "mafia":
 		for i := 0; i < len(room.Mafia); i++ {
@@ -139,6 +137,7 @@ func action(room *roomJSON, action int) {
 		room.Peaceful = tools.RemoveItemFromArray(room.Peaceful, votesMaxUserIndexRole)
 	}
 	room.Voted = 0
+	room.VotedToKill = 0
 	for i := 0; i < len(room.Users); i++ {
 		room.Users[i].Ready = false
 	}

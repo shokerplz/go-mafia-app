@@ -60,8 +60,14 @@ func actionValidator(w http.ResponseWriter, data url.Values) (rCode bool) {
 		} else if ok, _ := getRoomByID(player.RoomID, &Rooms); !ok {
 			http.Error(w, "No such room", http.StatusBadRequest)
 			rCode = false
-		} else if ok, _ := getPlayerInRoom(targetID, player.RoomID, &Rooms); !ok {
+		} else if ok, targetInRoom := getPlayerInRoom(targetID, player.RoomID, &Rooms); !ok {
 			http.Error(w, "Target is not in this room", http.StatusBadRequest)
+			rCode = false
+		} else if targetInRoom.Alive == false {
+			http.Error(w, "Target is not alive", http.StatusBadRequest)
+			rCode = false
+		} else if !tools.InIntArray(targetID, room.Alive) {
+			http.Error(w, "Target is not alive", http.StatusBadRequest)
 			rCode = false
 		}
 	}

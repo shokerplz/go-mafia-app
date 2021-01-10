@@ -22,6 +22,18 @@ func GetItemFromIntArray(find int, a *[]int) (bool, *int) {
 	return false, nil
 }
 
+// GetItemIndex Gets item index from integer array
+func GetItemIndex(find int, a *[]int) (index int) {
+	i := 0
+	for _, item := range *a {
+		if find == item {
+			return i
+		}
+		i++
+	}
+	return -1
+}
+
 // RemoveItemFromArray Removes item from array with reslicing
 func RemoveItemFromArray(s []int, i int) []int {
 	s[len(s)-1], s[i] = s[i], s[len(s)-1]
