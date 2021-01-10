@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"mafia-app/tools"
 	"math"
 	"math/rand"
@@ -89,6 +88,9 @@ func checkIfGameEnded(room *roomJSON) (ended bool, whoWon string) {
 }
 
 func action(room *roomJSON, action int) {
+	if len(room.Mafia) == 0 {
+		return
+	}
 	room.State = "vote"
 	var count *int
 	var maxCount int
@@ -101,34 +103,35 @@ func action(room *roomJSON, action int) {
 	}
 	for *count < maxCount {
 		time.Sleep(250 * time.Millisecond)
-		fmt.Print("\nCount: ", *count)
 	}
 	votesMax := 0
-	var votesMaxUser int
 	var votesMaxUserIndex int
 	var votesMaxUserIndexRole int
-	for i := 0; i > len(room.Users); i++ {
+	for i := 0; i < len(room.Users); i++ {
 		if room.Users[i].VotesAgainst >= votesMax {
 			votesMax = room.Users[i].VotesAgainst
-			votesMaxUser = room.Users[i].ID
 			votesMaxUserIndex = i
 		}
 		room.Users[i].VotesAgainst = 0
 	}
-	room.Jailed = append(room.Jailed, votesMaxUser)
+	if action == actions.vote {
+		room.Jailed = append(room.Jailed, room.Users[votesMaxUserIndex].ID)
+	} else if action == actions.kill {
+		room.Killed = append(room.Killed, room.Users[votesMaxUserIndex].ID)
+	}
 	room.Alive = tools.RemoveItemFromArray(room.Alive, votesMaxUserIndex)
 	switch room.Users[votesMaxUserIndex].Role {
 	case "mafia":
-		for i := 0; i > len(room.Mafia); i++ {
-			if room.Mafia[i] == votesMaxUserIndex {
+		for i := 0; i < len(room.Mafia); i++ {
+			if room.Mafia[i] == room.Users[votesMaxUserIndex].ID {
 				votesMaxUserIndexRole = i
 				break
 			}
 		}
 		room.Mafia = tools.RemoveItemFromArray(room.Mafia, votesMaxUserIndexRole)
 	case "peaceful":
-		for i := 0; i > len(room.Peaceful); i++ {
-			if room.Peaceful[i] == votesMaxUserIndex {
+		for i := 0; i < len(room.Peaceful); i++ {
+			if room.Peaceful[i] == room.Users[votesMaxUserIndex].ID {
 				votesMaxUserIndexRole = i
 				break
 			}
@@ -136,7 +139,7 @@ func action(room *roomJSON, action int) {
 		room.Peaceful = tools.RemoveItemFromArray(room.Peaceful, votesMaxUserIndexRole)
 	}
 	room.Voted = 0
-	for i := 0; i > len(room.Users); i++ {
+	for i := 0; i < len(room.Users); i++ {
 		room.Users[i].Ready = false
 	}
 }

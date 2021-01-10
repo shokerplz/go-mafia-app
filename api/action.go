@@ -76,7 +76,7 @@ func actionValidator(w http.ResponseWriter, data url.Values) (rCode bool) {
 		} else if action[0] == "vote" && room.State != "vote" {
 			http.Error(w, "You can not vote now", http.StatusBadRequest)
 			rCode = false
-		} else if action[0] == "kill" && room.State != "night" {
+		} else if action[0] == "kill" && room.Daytime != "night" {
 			http.Error(w, "You can not vote now", http.StatusBadRequest)
 			rCode = false
 		} else if (action[0] == "kill" && playerInRoom.Role != "mafia") ||
