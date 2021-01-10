@@ -75,7 +75,10 @@ func JoinRoom(w http.ResponseWriter, request *http.Request) {
 		if room.MaxUsers <= len(room.Users) {
 			room.State = "game"
 		}
-		// START GAME HERE WHEN IT IS READY
+		if room.MaxUsers <= len(room.Users) {
+			room.State = "game"
+			go game(room)
+		}
 		resp, err := json.Marshal(&room)
 		if err == nil {
 			w.Write(resp)

@@ -34,6 +34,7 @@ func main() {
 	mux.HandleFunc("/join", api.JoinRoom)
 	mux.HandleFunc("/ready", api.SetReady)
 	mux.HandleFunc("/status", api.GetStatus)
+	mux.HandleFunc("/action", api.Action)
 	handler := cors.Default().Handler(mux)
 	if err := http.ListenAndServe(":5000", handler); err != nil {
 		log.Fatal(err)

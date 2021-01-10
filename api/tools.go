@@ -36,3 +36,13 @@ func getPlayerInRoom(userID int, roomID int, a *[]roomJSON) (bool, *playerInRoom
 	}
 	return false, nil
 }
+
+// getPlayersReady iterates over users in room and returns true if all users are ready
+func getPlayersReady(room *roomJSON) bool {
+	for _, user := range room.Users {
+		if user.Ready == false {
+			return false
+		}
+	}
+	return true
+}

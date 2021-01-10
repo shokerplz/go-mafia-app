@@ -43,7 +43,7 @@ func SetReady(w http.ResponseWriter, request *http.Request) {
 		_, player := getPlayerByID(userID, &PlayersInfo)
 		_, playerInRoom := getPlayerInRoom(userID, player.RoomID, &Rooms)
 		playerInRoom.Ready = true
-		fmt.Fprintf(w, "{'success':'true'}")
+		w.Write([]byte(`{"success":"true"}`))
 		return
 	default:
 		w.WriteHeader(405)

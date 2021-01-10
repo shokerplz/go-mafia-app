@@ -60,7 +60,7 @@ func CreateRoom(w http.ResponseWriter, request *http.Request) {
 		i := 0
 		for {
 			i++
-			roomID := rand.Intn(100)
+			roomID := rand.Intn(99) + 1
 			if ok, _ := getRoomByID(roomID, &Rooms); !ok {
 				room.ID = roomID
 				room.MaxUsers = maxUsers

@@ -19,7 +19,7 @@ func GetUserID(w http.ResponseWriter, request *http.Request) {
 		i := 0
 		var userID int
 		for {
-			userID = rand.Intn(1000)
+			userID = rand.Intn(999) + 1
 			i++
 			if !tools.InIntArray(userID, Players) {
 				Players = append(Players, userID)

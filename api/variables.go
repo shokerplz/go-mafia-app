@@ -38,7 +38,7 @@ type roomJSON struct {
 	Jailed      []int              `json:"jailed"`
 	Mafia       []int              `json:"mafia"`
 	Peaceful    []int              `json:"peaceful"`
-	Cicle       string             `json:"cicle"`
+	Cicle       int                `json:"cicle"`
 	Voted       int                `json:"voted"`
 	VotedToKill int                `json:"voted_to_kill"`
 }
